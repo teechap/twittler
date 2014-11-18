@@ -49,17 +49,12 @@
                     text: updates[i].message,
                     class: "tweet"
                 });
-                $("<a/>", {
-                    class: updates[i].user,
-                    text: "@" + updates[i].user,
-                    href: "/" + updates[i].user
-                }).prependTo($tweet);
                 $("<div/>", {
                     text: updates[i].created_at,
                     class: "datetime"
                 }).appendTo($tweet);
 
-                $("#update").after($tweet);
+                $(".userPageHead").after($tweet);
             }
         }
         var userSelected = false;
@@ -76,6 +71,11 @@
             e.preventDefault();
             userSelected = true;
             userToRefresh = $(this).attr("class");
+            $("#feed").empty();
+            $("<div/>", {
+                text: "@" + userToRefresh,
+                class: "userPageHead"
+            }).prependTo($("#feed"));
             updateUser();
         });
       });
