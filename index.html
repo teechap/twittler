@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <button id="update">Update Tweets</button>
-    <div id="feed"></div>
+    <div id="feed">
+        <button id="update">Update Tweets</button>
+    </div>
     <script>
 
       $(document).ready(function(){
@@ -24,13 +25,59 @@
                 return new Date(a.created_at) - new Date(b.created_at);
             });
             for (var i = 0; i < updates.length; i++) {
-                var $tweet = $('<div></div>');
-                $tweet.text('@' + updates[i].user + ': ' + updates[i].message + " " + updates[i].created_at);
-                $tweet.prependTo(feed);
+                var $tweet = $('<div/>', {
+                    text: updates[i].message,
+                    class: "tweet"
+                });
+                $("<a/>", {
+                    class: updates[i].user,
+                    text: "@" + updates[i].user,
+                    href: "/" + updates[i].user
+                }).prependTo($tweet);
+                $("<div/>", {
+                    text: updates[i].created_at,
+                    class: "datetime"
+                }).appendTo($tweet);
+
+                $("#update").after($tweet);
             }
         }
+        var updateUser = function() {
+            var updates = streams.users[userToRefresh];
+            for (var i = 0; i < updates.length; i++) {
+                var $tweet = $('<div/>', {
+                    text: updates[i].message,
+                    class: "tweet"
+                });
+                $("<a/>", {
+                    class: updates[i].user,
+                    text: "@" + updates[i].user,
+                    href: "/" + updates[i].user
+                }).prependTo($tweet);
+                $("<div/>", {
+                    text: updates[i].created_at,
+                    class: "datetime"
+                }).appendTo($tweet);
+
+                $("#update").after($tweet);
+            }
+        }
+        var userSelected = false;
+        var userToRefresh;
         update();
-        $("#update").click(update);
+        $("#update").click(function() {
+            if (!userSelected) {
+                update();
+            } else {
+                updateUser();
+            }
+        });
+        $(".tweet a").click(function(e) {
+            e.preventDefault();
+            userSelected = true;
+            userToRefresh = $(this).attr("class");
+            updateUser();
+        });
       });
 
     </script>
