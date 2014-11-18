@@ -3,23 +3,34 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <button id="update">Update Tweets</button>
+    <div id="feed"></div>
     <script>
 
       $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
-
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
+        var feed = $('#feed');
+        var last_added;
+        var update = function() {
+            var updates = [];
+            for (var i = streams.home.length - 1; last_added !== streams.home[i]; i--) {
+                var t = streams.home[i];
+                updates.push(t);
+            }
+            last_added = streams.home[streams.home.length - 1]
+            updates.sort(function(a, b) {
+                return new Date(a.created_at) - new Date(b.created_at);
+            });
+            for (var i = 0; i < updates.length; i++) {
+                var $tweet = $('<div></div>');
+                $tweet.text('@' + updates[i].user + ': ' + updates[i].message + " " + updates[i].created_at);
+                $tweet.prependTo(feed);
+            }
         }
-
+        update();
+        $("#update").click(update);
       });
 
     </script>
